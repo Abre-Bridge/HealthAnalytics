@@ -1,0 +1,14 @@
+{
+  "name": "medipulse",
+  "version": "1.0.0",
+  "description": "MediPulse — Diagnostic intelligent par inférence bayésienne",
+  "scripts": {
+    "install-all": "cd backend && npm install && cd ../frontend && npm install",
+    "dev": "npx concurrently --kill-others \"npm run dev:api\" \"npm run dev:ui\"",
+    "dev:api": "cd backend && node index.js",
+    "dev:ui": "cd frontend && npm run dev",
+    "build": "cd backend && npm install && cd ../frontend && npm install && npm run build",
+    "start": "node backend/index.js"
+  },
+  "engines": { "node": ">=18.0.0" }
+}

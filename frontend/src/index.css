@@ -1,0 +1,473 @@
+/* ═══════════════════════════════════════════════════════════════
+   MediPulse — Medical Professional Theme with Light/Dark Mode
+   ═══════════════════════════════════════════════════════════════ */
+
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  /* ── Medical Colors ──────────────────────────────────────── */
+  --teal: #0d9488;
+  --teal-light: #14b8a6;
+  --teal-soft: rgba(13, 148, 136, 0.1);
+  --teal-glow: rgba(13, 148, 136, 0.25);
+  --blue: #0284c7;
+  --emerald: #059669;
+  --rose: #e11d48;
+  --rose-soft: rgba(225, 29, 72, 0.1);
+  --amber: #d97706;
+  --amber-soft: rgba(217, 119, 6, 0.1);
+  --green: #16a34a;
+  --green-soft: rgba(22, 163, 74, 0.1);
+
+  --radius: 20px;
+  --radius-sm: 12px;
+  --radius-xs: 8px;
+  --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Dark Mode (default) ───────────────────────────────────── */
+[data-theme="dark"] {
+  --bg: #0c1117;
+  --bg-secondary: #111820;
+  --surface: rgba(255, 255, 255, 0.03);
+  --glass: rgba(255, 255, 255, 0.04);
+  --glass-strong: rgba(255, 255, 255, 0.06);
+  --glass-border: rgba(255, 255, 255, 0.07);
+  --glass-hover: rgba(255, 255, 255, 0.08);
+  --text: #eceff4;
+  --text-secondary: #8b95a5;
+  --text-muted: #4a5568;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.6);
+  --invert: 0;
+}
+
+/* ── Light Mode ────────────────────────────────────────────── */
+[data-theme="light"] {
+  --bg: #f0f4f8;
+  --bg-secondary: #ffffff;
+  --surface: rgba(0, 0, 0, 0.02);
+  --glass: rgba(255, 255, 255, 0.7);
+  --glass-strong: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(0, 0, 0, 0.06);
+  --glass-hover: rgba(0, 0, 0, 0.04);
+  --text: #1a202c;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.08);
+  --invert: 1;
+}
+
+html { font-size: 15px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  transition: background var(--transition), color var(--transition);
+}
+
+/* ── Ambient Glow (dark only) ──────────────────────────────── */
+[data-theme="dark"] body::before {
+  content: '';
+  position: fixed;
+  width: 700px; height: 700px;
+  top: -300px; left: -200px;
+  background: radial-gradient(circle, rgba(13, 148, 136, 0.07), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-theme="dark"] body::after {
+  content: '';
+  position: fixed;
+  width: 500px; height: 500px;
+  bottom: -200px; right: -100px;
+  background: radial-gradient(circle, rgba(2, 132, 199, 0.05), transparent 70%);
+  pointer-events: none;
+  z-index: -1;
+}
+
+[data-theme="light"] body::before, [data-theme="light"] body::after { display: none; }
+
+#root { max-width: 1280px; margin: 0 auto; padding: 1.25rem; }
+
+/* ── Glass Card ────────────────────────────────────────────── */
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(40px) saturate(140%);
+  -webkit-backdrop-filter: blur(40px) saturate(140%);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+  position: relative;
+}
+
+[data-theme="dark"] .glass::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+}
+
+.glass:hover { border-color: var(--glass-hover); }
+
+/* ── Navigation ────────────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 10px;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0.6rem 0.6rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background: var(--glass-strong);
+  backdrop-filter: blur(40px) saturate(150%);
+  border: 1px solid var(--glass-border);
+  border-radius: 99px;
+  box-shadow: var(--shadow);
+  transition: all var(--transition);
+}
+
+.nav__left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.nav__icon {
+  width: 32px; height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--teal), var(--blue));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.nav__brand {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: -0.3px;
+}
+
+.nav__right {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 2px;
+  background: var(--surface);
+  padding: 3px;
+  border-radius: 99px;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.95rem;
+  border-radius: 99px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.tab:hover { color: var(--text); }
+.tab--active {
+  background: var(--bg-secondary);
+  color: var(--text);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
+
+/* ── Theme Toggle ──────────────────────────────────────────── */
+.theme-toggle {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-left: 0.5rem;
+}
+
+.theme-toggle:hover {
+  background: var(--glass-hover);
+  color: var(--text);
+  border-color: var(--teal);
+}
+
+/* ── Typography ────────────────────────────────────────────── */
+.label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--text-muted);
+}
+
+.metric {
+  font-size: 2.25rem;
+  font-weight: 800;
+  letter-spacing: -1px;
+  line-height: 1.15;
+}
+
+.section-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: -0.2px;
+}
+
+/* ── Grid ──────────────────────────────────────────────────── */
+.grid { display: grid; gap: 1.25rem; }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-main { grid-template-columns: 5fr 3fr; }
+
+/* ── Symptom Chips ─────────────────────────────────────────── */
+.chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+
+.chip {
+  padding: 0.5rem 0.85rem;
+  border-radius: 99px;
+  border: 1px solid var(--glass-border);
+  background: var(--surface);
+  color: var(--text-secondary);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.chip:hover {
+  color: var(--text);
+  border-color: var(--teal);
+  background: var(--teal-soft);
+}
+
+.chip--selected {
+  background: var(--teal-soft);
+  color: var(--teal);
+  border-color: rgba(13, 148, 136, 0.35);
+  font-weight: 600;
+}
+
+/* ── Inputs ────────────────────────────────────────────────── */
+.input {
+  background: var(--surface);
+  border: 1px solid var(--glass-border);
+  padding: 0.7rem 1rem;
+  border-radius: var(--radius-xs);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.88rem;
+  width: 100%;
+  transition: all var(--transition);
+}
+
+.input::placeholder { color: var(--text-muted); }
+.input:focus {
+  outline: none;
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px var(--teal-soft);
+}
+
+select.input {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 2.5rem;
+}
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn--primary {
+  background: linear-gradient(135deg, var(--teal), var(--emerald));
+  color: white;
+  box-shadow: 0 4px 16px var(--teal-glow);
+}
+.btn--primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px var(--teal-glow);
+}
+.btn--primary:disabled { opacity: 0.4; pointer-events: none; }
+
+.btn--ghost {
+  background: var(--surface);
+  color: var(--text-secondary);
+  border: 1px solid var(--glass-border);
+}
+.btn--ghost:hover { color: var(--text); background: var(--glass-hover); }
+
+.btn--block { width: 100%; }
+
+/* ── Result Cards ──────────────────────────────────────────── */
+.result-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.result-card:hover { border-color: var(--glass-border); }
+
+.result-rank {
+  width: 48px; height: 48px;
+  border-radius: var(--radius-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.severity-high { background: var(--rose-soft); color: var(--rose); }
+.severity-mod { background: var(--amber-soft); color: var(--amber); }
+.severity-low { background: var(--green-soft); color: var(--green); }
+
+/* ── Progress Bar ──────────────────────────────────────────── */
+.progress-track {
+  height: 5px;
+  background: var(--surface);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-top: 0.35rem;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ── Badge ─────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.55rem;
+  border-radius: 99px;
+  font-size: 0.62rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* ── Medical Banner ────────────────────────────────────────── */
+.med-banner {
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-xs);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+}
+
+.med-banner--warn { background: var(--amber-soft); color: var(--amber); }
+.med-banner--danger { background: var(--rose-soft); color: var(--rose); }
+.med-banner--info { background: var(--teal-soft); color: var(--teal); }
+
+/* ── Toast ──────────────────────────────────────────────────── */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  padding: 0.75rem 1.1rem;
+  background: var(--glass-strong);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 999;
+  box-shadow: var(--shadow-lg);
+}
+
+/* ── Health Cross Watermark ────────────────────────────────── */
+.watermark {
+  position: fixed;
+  bottom: 1rem;
+  left: 1rem;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* ── Animations ────────────────────────────────────────────── */
+.fade-in { animation: fadeIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--glass-border); border-radius: 3px; }
+
+/* ── Responsive ────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .grid-4, .grid-3, .grid-2, .grid-main { grid-template-columns: 1fr; }
+  .nav { flex-direction: column; gap: 0.6rem; border-radius: var(--radius); padding: 0.75rem; }
+  .nav__right { width: 100%; justify-content: space-between; }
+  .tabs { flex: 1; justify-content: center; }
+  .metric { font-size: 1.8rem; }
+}
