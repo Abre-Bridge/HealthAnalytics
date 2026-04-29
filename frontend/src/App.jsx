@@ -119,27 +119,37 @@ export default function App() {
 
   return (
     <div className="fade-in">
-      {/* ── Nav ─────────────────────────────────────────────── */}
-      <nav className="nav">
-        <div className="nav__left">
-          <div className="nav__icon"><HeartPulse size={20} color="#fff" strokeWidth={2.5} /></div>
-          <div className="nav__brand">
-            <span style={{ color: 'var(--text)' }}>Health</span>
-            <span className="text-gradient">Bridge</span>
-          </div>
+      {/* ── HEADER ────────────────────────────────────────────── */}
+      <header className="top-header">
+        <div className="brand">
+          <div className="brand-icon"><HeartPulse size={20} /></div>
+          <div><span style={{ color: 'var(--text)' }}>Health</span><span className="text-gradient">Bridge</span></div>
         </div>
-        <div className="nav__right">
-          <div className="tabs">
+        
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          {/* Desktop Nav */}
+          <nav className="desktop-nav">
             {TABS.map(t => (
-              <button key={t.id} className={`tab ${tab === t.id ? 'tab--active' : ''}`} onClick={() => setTab(t.id)}>
+              <button key={t.id} className={`desktop-tab ${tab === t.id ? 'desktop-tab--active' : ''}`} onClick={() => setTab(t.id)}>
                 <t.icon size={16} strokeWidth={tab === t.id ? 2.5 : 2} /> {t.label}
               </button>
             ))}
-          </div>
+          </nav>
+          
           <button className="theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
+      </header>
+
+      {/* ── MOBILE BOTTOM NAV ───────────────────────────────── */}
+      <nav className="bottom-nav">
+        {TABS.map(t => (
+          <button key={t.id} className={`nav-item ${tab === t.id ? 'nav-item--active' : ''}`} onClick={() => setTab(t.id)}>
+            <span className="icon-wrap"><t.icon size={20} strokeWidth={tab === t.id ? 2.5 : 2} /></span>
+            <span>{t.label}</span>
+          </button>
+        ))}
       </nav>
 
       <AnimatePresence mode="wait">
