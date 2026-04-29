@@ -60,7 +60,7 @@ body {
 .text-gradient {
   background: linear-gradient(135deg, var(--teal-400), var(--sky-400));
   -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent;
+  -webkit-text-fill-color:white;
 }
 [data-theme="light"] .text-gradient { background: linear-gradient(135deg, var(--teal-600), var(--sky-500)); }
 

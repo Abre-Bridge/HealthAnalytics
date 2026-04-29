@@ -135,14 +135,14 @@ export default function App() {
               </button>
             ))}
           </nav>
-          
+
           <button className="theme-toggle" onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}>
             {theme === 'dark' ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
       </header>
 
-      {/* ── MOBILE BOTTOM NAV ───────────────────────────────── */}
+      {/* ── MOBILE BOTTOM NAV ───────          ────────────────────────── */}
       <nav className="bottom-nav">
         {TABS.map(t => (
           <button key={t.id} className={`nav-item ${tab === t.id ? 'nav-item--active' : ''}`} onClick={() => setTab(t.id)}>
