@@ -325,7 +325,7 @@ if (fs.existsSync(DIST)) {
 
 if (process.env.NODE_ENV !== 'production' || process.env.RAILWAY_ENVIRONMENT) {
   app.listen(PORT, () => {
-    console.log(`\n  🩺 MediPulse API`);
+    console.log(`\n  🩺 HealthBridge Analytics API`);
     console.log(`  ├─ Port:   ${PORT}`);
     console.log(`  ├─ Maladies: ${Object.keys(DISEASES).length}`);
     console.log(`  ├─ Symptômes: ${ALL_SYMPTOMS.length}`);
