@@ -56,10 +56,12 @@ export default function App() {
         axios.get(`${API}/history`),
         axios.get(`${API}/stats`)
       ]);
-      setSymptoms(sympRes.data);
-      setHistory(histRes.data || []);
-      setStats(statRes.data);
-    } catch (e) { console.error("API Error", e); }
+      if (Array.isArray(sympRes.data)) setSymptoms(sympRes.data);
+      if (Array.isArray(histRes.data)) setHistory(histRes.data);
+      if (statRes.data && typeof statRes.data === 'object') setStats(statRes.data);
+    } catch (e) {
+      console.error("API Error", e);
+    }
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);
