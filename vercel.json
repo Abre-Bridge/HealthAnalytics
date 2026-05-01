@@ -2,6 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
+  "public": "frontend/public",
   "rewrites": [
     {
       "source": "/api/(.*)",
