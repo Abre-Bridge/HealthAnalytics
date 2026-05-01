@@ -129,7 +129,7 @@ export default function App() {
       <header className="top-header">
         <div className="brand">
           <div className="brand-icon"><HeartPulse size={20} /></div>
-          <div><span style={{ color: 'var(--text)' }}>Health</span><span className="text-gradient">Bridge</span></div>
+          <div><span style={{ color: 'var(--text)' }}>Abre</span><span className="text-gradient">Bridge</span></div>
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -310,9 +310,14 @@ export default function App() {
               </div>
             </motion.div>
 
-            <motion.button variants={itemVariants} className="btn btn--ghost btn--block" onClick={reset}>
-               Terminer et Démarrer une Nouvelle Consultation
-            </motion.button>
+            <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+              <button className="btn btn--ghost" style={{ flex: 1 }} onClick={() => window.print()}>
+                <Droplet size={18} /> Imprimer le Rapport Clinique
+              </button>
+              <button className="btn btn--primary" style={{ flex: 2 }} onClick={reset}>
+                 Terminer et Nouvelle Consultation
+              </button>
+            </div>
           </motion.div>
         )}
 
