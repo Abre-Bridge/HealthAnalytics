@@ -58,7 +58,7 @@ export default function App() {
       ]);
       if (Array.isArray(sympRes.data)) setSymptoms(sympRes.data);
       if (Array.isArray(histRes.data)) setHistory(histRes.data);
-      if (statRes.data && typeof statRes.data === 'object') setStats(statRes.data);
+      if (statRes.data && typeof statRes.data === 'object' && !Array.isArray(statRes.data)) setStats(statRes.data);
     } catch (e) {
       console.error("API Error", e);
     }
@@ -84,10 +84,14 @@ export default function App() {
         gender: form.gender,
         patientName: form.name || 'Anonyme'
       });
-      setResult(res.data);
-      setTab('results');
-      fetchData();
-    } catch { } finally { setLoading(false); }
+      if (res.data && res.data.results) {
+        setResult(res.data);
+        setTab('results');
+        fetchData();
+      }
+    } catch (e) {
+      console.error("Diagnosis Error", e);
+    } finally { setLoading(false); }
   };
 
   const reset = () => {
@@ -246,7 +250,7 @@ export default function App() {
               <div className="glass">
                 <div className="section-title"><Activity size={20} color="var(--teal-500)" /> Tableau des Probabilités</div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                  {result.results.map((r, i) => (
+                  {Array.isArray(result.results) && result.results.map((r, i) => (
                     <div key={i} className="result-card">
                       <div className={`result-rank ${r.severity === 'Élevée' ? 'bg-danger' : r.severity === 'Modérée' ? 'bg-warn' : 'bg-safe'}`}>
                         {r.probability}%
@@ -295,8 +299,8 @@ export default function App() {
                   <div style={{ height: 220 }}>
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
-                        <Pie data={result.results.slice(0, 5)} dataKey="probability" nameKey="disease" cx="50%" cy="50%" innerRadius={60} outerRadius={90} strokeWidth={0} paddingAngle={2}>
-                          {result.results.slice(0, 5).map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
+                        <Pie data={Array.isArray(result.results) ? result.results.slice(0, 5) : []} dataKey="probability" nameKey="disease" cx="50%" cy="50%" innerRadius={60} outerRadius={90} strokeWidth={0} paddingAngle={2}>
+                          {Array.isArray(result.results) && result.results.slice(0, 5).map((_, i) => <Cell key={i} fill={PIE_COLORS[i]} />)}
                         </Pie>
                         <Tooltip content={<TT />} />
                       </PieChart>
@@ -348,7 +352,7 @@ export default function App() {
                           <YAxis dataKey="name" type="category" width={140} stroke="var(--text-muted)" tick={{ fontSize: 11, fontWeight: 500 }} />
                           <Tooltip content={<TT />} />
                           <Bar dataKey="count" name="Observations" radius={[0, 6, 6, 0]} barSize={18}>
-                            {stats.topSymptoms.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                            {Array.isArray(stats.topSymptoms) && stats.topSymptoms.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                           </Bar>
                         </BarChart>
                       </ResponsiveContainer>
@@ -360,8 +364,8 @@ export default function App() {
                     <div style={{ height: 320 }}>
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
-                          <Pie data={stats.diseaseFrequency} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={110} strokeWidth={2} stroke="var(--bg)" label={({ name, pct }) => `${name} ${pct}%`} labelLine={false} style={{ fontSize: 10, fontWeight: 600 }}>
-                            {stats.diseaseFrequency.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
+                          <Pie data={Array.isArray(stats.diseaseFrequency) ? stats.diseaseFrequency : []} dataKey="count" nameKey="name" cx="50%" cy="50%" innerRadius={50} outerRadius={110} strokeWidth={2} stroke="var(--bg)" label={({ name, pct }) => `${name} ${pct}%`} labelLine={false} style={{ fontSize: 10, fontWeight: 600 }}>
+                            {Array.isArray(stats.diseaseFrequency) && stats.diseaseFrequency.map((_, i) => <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />)}
                           </Pie>
                           <Tooltip content={<TT />} />
                         </PieChart>
