@@ -50,18 +50,23 @@ export default function App() {
   const [loading, setLoading] = useState(false);
 
   const fetchData = useCallback(async () => {
+    // Fetch Symptoms (Critical for UI)
     try {
-      const [sympRes, histRes, statRes] = await Promise.all([
-        axios.get(`${API}/symptoms`),
-        axios.get(`${API}/history`),
-        axios.get(`${API}/stats`)
-      ]);
+      const sympRes = await axios.get(`${API}/symptoms`);
       if (Array.isArray(sympRes.data)) setSymptoms(sympRes.data);
+    } catch (e) { console.error("Symptoms Load Error", e); }
+
+    // Fetch History
+    try {
+      const histRes = await axios.get(`${API}/history`);
       if (Array.isArray(histRes.data)) setHistory(histRes.data);
+    } catch (e) { console.error("History Load Error", e); }
+
+    // Fetch Stats
+    try {
+      const statRes = await axios.get(`${API}/stats`);
       if (statRes.data && typeof statRes.data === 'object' && !Array.isArray(statRes.data)) setStats(statRes.data);
-    } catch (e) {
-      console.error("API Error", e);
-    }
+    } catch (e) { console.error("Stats Load Error", e); }
   }, []);
 
   useEffect(() => { fetchData(); }, [fetchData]);

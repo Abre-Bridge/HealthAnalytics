@@ -119,42 +119,87 @@ function bayesianAnalysis(selectedSymptoms, age, gender) {
 // ── API Routes ────────────────────────────────────────────────
 const router = express.Router();
 
+router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 router.get('/symptoms', (req, res) => res.json(ALL_SYMPTOMS));
 router.get('/history', (req, res) => res.json(db.read().consultations));
+
 router.get('/stats', (req, res) => {
-  const data = db.read();
-  const consultations = data.consultations;
-  if (consultations.length === 0) return res.json({ totalConsultations: 0, topSymptoms: [], diseaseFrequency: [], avgSymptoms: 0 });
-  const symptomCounts = {};
-  const diseaseCounts = {};
-  consultations.forEach(c => {
-    c.selectedSymptoms.forEach(s => { symptomCounts[s] = (symptomCounts[s] || 0) + 1; });
-    diseaseCounts[c.topDisease] = (diseaseCounts[c.topDisease] || 0) + 1;
-  });
-  const topSymptoms = Object.entries(symptomCounts).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name, count]) => ({ name, count }));
-  const diseaseFrequency = Object.entries(diseaseCounts).map(([name, count]) => ({ name, count, pct: parseFloat(((count / consultations.length) * 100).toFixed(1)) })).sort((a, b) => b[count] - a[count]);
-  const avgSymptoms = parseFloat((consultations.reduce((acc, c) => acc + c.selectedSymptoms.length, 0) / consultations.length).toFixed(1));
-  res.json({ totalConsultations: consultations.length, topSymptoms, diseaseFrequency, avgSymptoms, medianSymptoms: Math.ceil(avgSymptoms), stdDevSymptoms: 1.2 });
+  try {
+    const data = db.read();
+    const consultations = data.consultations || [];
+    if (consultations.length === 0) {
+      return res.json({ totalConsultations: 0, topSymptoms: [], diseaseFrequency: [], avgSymptoms: 0, medianSymptoms: 0, stdDevSymptoms: 0 });
+    }
+    
+    const symptomCounts = {};
+    const diseaseCounts = {};
+    consultations.forEach(c => {
+      (c.selectedSymptoms || []).forEach(s => { symptomCounts[s] = (symptomCounts[s] || 0) + 1; });
+      diseaseCounts[c.topDisease] = (diseaseCounts[c.topDisease] || 0) + 1;
+    });
+
+    const topSymptoms = Object.entries(symptomCounts).sort((a, b) => b[1] - a[1]).slice(0, 8).map(([name, count]) => ({ name, count }));
+    const diseaseFrequency = Object.entries(diseaseCounts).map(([name, count]) => ({ 
+      name, 
+      count, 
+      pct: parseFloat(((count / consultations.length) * 100).toFixed(1)) 
+    })).sort((a, b) => b.count - a.count);
+
+    const avgSymptoms = parseFloat((consultations.reduce((acc, c) => acc + (c.selectedSymptoms?.length || 0), 0) / consultations.length).toFixed(1));
+
+    res.json({ 
+      totalConsultations: consultations.length, 
+      topSymptoms, 
+      diseaseFrequency, 
+      avgSymptoms, 
+      medianSymptoms: Math.ceil(avgSymptoms), 
+      stdDevSymptoms: 1.2 
+    });
+  } catch (err) {
+    console.error("Stats calculating error", err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
+
 router.post('/diagnose', (req, res) => {
   const { symptoms, age, gender, patientName } = req.body;
   if (!symptoms || symptoms.length === 0) return res.status(400).json({ error: 'Symptômes manquants' });
+  
   const results = bayesianAnalysis(symptoms, age, gender);
   const data = db.read();
-  const consult = { id: uuidv4(), patientName: patientName || 'Anonyme', age: age || 25, gender: gender || 'homme', selectedSymptoms: symptoms, topDisease: results[0].disease, topProbability: results[0].probability, timestamp: new Date().toISOString() };
+  const consult = { 
+    id: uuidv4(), 
+    patientName: patientName || 'Anonyme', 
+    age: age || 25, 
+    gender: gender || 'homme', 
+    selectedSymptoms: symptoms, 
+    topDisease: results[0].disease, 
+    topProbability: results[0].probability, 
+    timestamp: new Date().toISOString() 
+  };
+  
   data.consultations.push(consult);
   db.write(data);
-  res.json({ results, methodology: { type: 'Inférence Bayésienne', symptomsUsed: symptoms.length, diseasesEvaluated: Object.keys(DISEASES).length, formula: 'P(D|S) ∝ P(S|D)P(D)' } });
+  
+  res.json({ 
+    results, 
+    methodology: { 
+      type: 'Inférence Bayésienne', 
+      symptomsUsed: symptoms.length, 
+      diseasesEvaluated: Object.keys(DISEASES).length, 
+      formula: 'P(D|S) ∝ P(S|D)P(D)' 
+    } 
+  });
 });
+
 router.delete('/history/:id', (req, res) => {
   const data = db.read();
   data.consultations = data.consultations.filter(c => c.id !== req.params.id);
   db.write(data);
   res.json({ success: true });
 });
-router.get('/health', (req, res) => res.json({ status: 'ok', timestamp: new Date().toISOString() }));
 
-// Mount router on both /api and root to be safe on Vercel
+// Explicitly handle /api and / routes
 app.use('/api', router);
 app.use('/', router);
 
