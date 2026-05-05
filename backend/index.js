@@ -329,7 +329,7 @@ if (process.env.NODE_ENV !== 'production' || process.env.RAILWAY_ENVIRONMENT) {
     console.log(`  ├─ Port:   ${PORT}`);
     console.log(`  ├─ Maladies: ${Object.keys(DISEASES).length}`);
     console.log(`  ├─ Symptômes: ${ALL_SYMPTOMS.length}`);
-    console.log(`  └─ Status: Opérationnel\n`);
+    console.log(`  └─ Status: Opérationnel || running \n`);
   });
 }
 
