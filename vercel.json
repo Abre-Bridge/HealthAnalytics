@@ -1,12 +1,17 @@
 {
   "version": 2,
+  "functions": {
+    "api/index.js": {
+      "includeFiles": "db.json"
+    }
+  },
   "rewrites": [
     {
       "source": "/api/(.*)",
       "destination": "/api/index.js"
     },
     {
-      "source": "/((?!api/|api$).*)",
+      "source": "/(.*)",
       "destination": "/index.html"
     }
   ]
