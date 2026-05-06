@@ -133,7 +133,7 @@ export default function App() {
       <header className="top-header">
         <div className="brand">
           <div className="brand-icon"><HeartPulse size={20} /></div>
-          <div><span style={{ color: 'var(--text)' }}>Abre</span><span className="text-gradient">Bridge</span></div>
+          <div><span style={{ color: 'var(--text)' }}>Medic</span><span className="text-gradient">Bridge</span></div>
         </div>
         
         <div style={{ display: 'flex', alignItems: 'center' }}>
