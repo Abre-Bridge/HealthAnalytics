@@ -330,28 +330,6 @@ if (process.env.NODE_ENV !== 'production' || process.env.RAILWAY_ENVIRONMENT || 
     console.log(`  ├─ Maladies: ${Object.keys(DISEASES).length}`);
     console.log(`  ├─ Symptômes: ${ALL_SYMPTOMS.length}`);
     console.log(`  └─ Status: Opérationnel\n`);
-
-    // Self-ping function to bypass sleep restriction on free tiers
-    const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
-    setInterval(() => {
-      // Use the public domain or a specified PING_URL to route traffic through the external load balancer
-      const publicDomain = process.env.RAILWAY_PUBLIC_DOMAIN || process.env.PING_URL;
-      const url = publicDomain 
-        ? (publicDomain.startsWith('http') ? `${publicDomain}/api/health` : `https://${publicDomain}/api/health`) 
-        : `http://localhost:${PORT}/api/health`;
-      
-      console.log(`[Self-Ping] Pinging service at ${url} to keep awake...`);
-      
-      const protocol = url.startsWith('https') ? require('https') : require('http');
-      protocol.get(url, (res) => {
-        console.log(`[Self-Ping] Status: ${res.statusCode}`);
-        // Consume response data to prevent memory leaks
-        res.on('data', () => {});
-        res.on('end', () => {});
-      }).on('error', (err) => {
-        console.error(`[Self-Ping] Error: ${err.message}`);
-      });
-    }, PING_INTERVAL);
   });
 }
 
