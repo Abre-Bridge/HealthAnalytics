@@ -10,7 +10,7 @@ import {
   Trash2, CheckCircle2, AlertOctagon, ShieldCheck, Clock, Users, Sun, Moon, Stethoscope, Droplet
 } from 'lucide-react';
 
-const API = 'https://healthanalytics.onrender.com';
+const API = 'https://healthanalytics.onrender.com/api/';
 // ── Medical Tooltip ────────────────────────────────────────────
 function TT({ active, payload, label }) {
   if (!active || !payload?.length) return null;
