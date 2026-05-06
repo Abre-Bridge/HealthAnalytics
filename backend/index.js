@@ -323,13 +323,34 @@ if (fs.existsSync(DIST)) {
   });
 }
 
-if (process.env.NODE_ENV !== 'production' || process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PUBLIC_DOMAIN) {
+if (process.env.NODE_ENV !== 'production' || process.env.RENDER || process.env.RAILWAY_ENVIRONMENT || process.env.RAILWAY_PUBLIC_DOMAIN) {
   app.listen(PORT, () => {
     console.log(`\n  🩺 HealthBridge Analytics API`);
     console.log(`  ├─ Port:   ${PORT}`);
     console.log(`  ├─ Maladies: ${Object.keys(DISEASES).length}`);
     console.log(`  ├─ Symptômes: ${ALL_SYMPTOMS.length}`);
     console.log(`  └─ Status: Opérationnel\n`);
+
+    // Self-ping function to bypass Render's free tier sleep restriction
+    const PING_INTERVAL = 14 * 60 * 1000; // 14 minutes
+    setInterval(() => {
+      // Use Render's external URL or fallback to a custom PING_URL
+      const url = process.env.RENDER_EXTERNAL_URL 
+        ? `${process.env.RENDER_EXTERNAL_URL}/api/health`
+        : (process.env.PING_URL || `http://localhost:${PORT}/api/health`);
+      
+      console.log(`[Self-Ping] Pinging service at ${url} to keep awake...`);
+      
+      const protocol = url.startsWith('https') ? require('https') : require('http');
+      protocol.get(url, (res) => {
+        console.log(`[Self-Ping] Status: ${res.statusCode}`);
+        // Consume response data to prevent memory leaks
+        res.on('data', () => {});
+        res.on('end', () => {});
+      }).on('error', (err) => {
+        console.error(`[Self-Ping] Error: ${err.message}`);
+      });
+    }, PING_INTERVAL);
   });
 }
 
